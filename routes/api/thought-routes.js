@@ -15,7 +15,10 @@ router.route('/').get(getAllThoughts).post(createThought);
 // GET & PUT & DELETE /api/thoughts/:id
 router.route('/:id').get(getThoughtById).put(updateThought).delete(deleteThought);
 
-// PUT & DELETE /api/thoughts/:thoughtId/reactions
-router.route('/:id/reactions').put(createReaction).delete(deleteReaction);
+// PUT /api/thoughts/:thoughtId/reactions/
+router.route('/:thoughtId/reactions/').put(createReaction);
+
+// DELETE /api/thoughts/:thoughtId/reactions/:reactionId
+router.route('/:thoughtId/reactions/:reactionId').delete(deleteReaction);
 
 module.exports = router;
