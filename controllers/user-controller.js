@@ -55,30 +55,27 @@ const userController = {
       })
       .catch((err) => res.status(500).json(err));
   },
-  // delete a user by their id
+  // delete a user by their id & delete their thoughts & remove them from any friends lists
   deleteUser({ params }, res) {
-    // User.remove({ _id: params.id })
-    //   .then((userData) => {
-    //     if (!userData) {
-    //       res.status(404).json({ message: 'No user found with this id' });
-    //       return;
-    //     }
-    //     res.json({ message: 'User deleted' });
-    //   })
-    //   .catch((err) => res.status(500).json(err));
     User.findOneAndDelete({ _id: params.id })
       .then((userData) => {
         if (!userData) {
           res.status(404).json({ message: 'No user found with this id' });
           return;
         }
-        Thought.deleteMany({ username: userData.username })
-          .then((thoughtData) => {
-            res.json({
-              message: `User deleted along with ${thoughtData.deletedCount} of their thought(s)`,
-            });
-          })
-          .catch((err) => res.status(500).json(err));
+        Thought.deleteMany({ username: userData.username }).then(
+          (thoughtData) => console.log("deleted user's thoughts")
+        );
+        User.findOneAndUpdate(
+          { friends: userData._id },
+          { $pull: { friends: userData._id } }
+        ).then((userData) =>
+          console.log("deleted user from all friend's lists")
+        );
+        res.json({
+          message:
+            'User deleted along with their thoughts and removed from any friends lists',
+        });
       })
       .catch((err) => res.status(500).json(err));
   },
