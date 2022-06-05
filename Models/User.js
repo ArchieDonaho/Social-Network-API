@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { Schema, model } = require('mongoose');
+const Thought = require('./Thought');
 
 const UserSchema = new Schema(
   {
@@ -37,6 +38,14 @@ const UserSchema = new Schema(
   }
 );
 
+// delete all thoughts if the user is deleted
+UserSchema.pre('remove', function (next) {
+  console.log(this);
+  Thought.findOneAndDelete({ username: this.username }).exec();
+  next();
+});
+
+// add up all friends
 UserSchema.virtual('friendCount').get(function () {
   return this.friends.length;
 });
